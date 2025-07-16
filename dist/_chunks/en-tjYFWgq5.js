@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+const en = {
+  "plugin.name": "URL Redirects",
+  "settings.title": "Redirect Settings",
+  "settings.subtitle": "Configure automatic URL redirects when slugs change",
+  "settings.save": "Save settings",
+  "settings.slugField": "Slug Field",
+  "settings.slugField.hint": "Select which field to use as the URL slug",
+  "settings.noFields": "No string fields available",
+  "settings.noContentTypes": "No content types available",
+  "settings.noValidFields": "No valid slug fields",
+  "permissions.read": "Access the redirect plugin",
+  "permissions.update": "Update redirect settings",
+  "settings.section": "Redirect Manager Settings",
+  "settings.link": "Configure Redirects"
+};
+exports.default = en;
