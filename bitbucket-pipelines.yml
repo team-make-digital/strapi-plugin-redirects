@@ -7,7 +7,7 @@
 # Prerequisites: $NPM_TOKEN setup in the Deployment variables.
 # For advanced cases, please, follow examples from the pipe's README https://bitbucket.org/atlassian/npm-publish/src/master/README.md
 
-image: node:16
+image: node:18
 
 pipelines:
   default:
