@@ -1,5 +1,5 @@
 {
-  "name": "strapi-plugin-redirects",
+  "name": "strapi-plugin-redirect-manager",
   "version": "1.0.0",
   "keywords": [],
   "type": "commonjs",
