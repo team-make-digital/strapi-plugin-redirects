@@ -11,6 +11,7 @@ declare const _default: {
         saveSettings(settings: import("./redirect").Settings): Promise<void>;
         createRedirect(data: import("./redirect").RedirectData): Promise<void>;
         resolveRedirect(contentType: string, inputSlug: string): Promise<import("./redirect").RedirectEntry>;
+        getAllRedirects(): Promise<import("./redirect").RedirectEntryCompact[]>;
         getContentTypes(): Promise<{
             uid: string;
             attributes: {

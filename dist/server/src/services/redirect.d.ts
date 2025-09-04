@@ -22,6 +22,11 @@ export interface RedirectEntry {
     redirectType: string;
     comment?: string;
 }
+export interface RedirectEntryCompact {
+    oldSlug: string;
+    newSlug: string;
+    redirectType: string;
+}
 declare const _default: ({ strapi }: {
     strapi: Core.Strapi;
 }) => {
@@ -29,6 +34,7 @@ declare const _default: ({ strapi }: {
     saveSettings(settings: Settings): Promise<void>;
     createRedirect(data: RedirectData): Promise<void>;
     resolveRedirect(contentType: string, inputSlug: string): Promise<RedirectEntry | null>;
+    getAllRedirects(): Promise<RedirectEntryCompact[]>;
     getContentTypes(): Promise<Array<{
         uid: string;
         attributes: {

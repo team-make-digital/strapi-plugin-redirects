@@ -23,6 +23,12 @@ export interface RedirectEntry {
   comment?: string;
 }
 
+export interface RedirectEntryCompact {
+  oldSlug: string;
+  newSlug: string;
+  redirectType: string;
+}
+
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async getSettings(): Promise<Settings> {
     const pluginStore = strapi.store({
@@ -43,7 +49,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       type: 'plugin',
       name: 'redirect-manager',
     });
-  
+
     await pluginStore.set({
       key: 'settings',
       value: settings,
@@ -60,9 +66,28 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     const visitedSlugs = new Set<string>();
 
     while (true) {
-      const foundRedirect = await strapi.db.query('plugin::redirect-manager.redirect').findOne({
-        where: { contentType, oldSlug: currentSlug },
-      });
+
+      const [
+        foundRedirect1,
+        foundRedirect2,
+        foundRedirect3,
+        foundRedirect4,
+      ] = await Promise.all([
+        strapi.db.query('plugin::redirect-manager.redirect').findOne({
+          where: { contentType, oldSlug: currentSlug },
+        }),
+        strapi.db.query('plugin::redirect-manager.redirect').findOne({
+          where: { contentType, oldSlug: "/"+currentSlug },
+        }),
+        strapi.db.query('plugin::redirect-manager.redirect').findOne({
+          where: { contentType, oldSlug: currentSlug+"/" },
+        }),
+        strapi.db.query('plugin::redirect-manager.redirect').findOne({
+          where: { contentType, oldSlug: "/"+currentSlug+"/" },
+        })
+      ]);
+
+      const foundRedirect = foundRedirect1 || foundRedirect2 || foundRedirect3 || foundRedirect4;
 
       if (!foundRedirect || visitedSlugs.has(foundRedirect.newSlug)) {
         break;
@@ -76,6 +101,23 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     return redirect;
   },
 
+  async getAllRedirects(): Promise<RedirectEntryCompact[]> {
+    const entries = await strapi.db.query("plugin::redirect-manager.redirect").findMany({
+      select: ["oldSlug", "newSlug", "redirectType"],
+      limit: 500, // important: fetch ALL, not just 100
+    });
+
+    return entries
+      .filter(entry => {
+        return entry.oldSlug.split("/").filter(Boolean).length > 1;
+      })
+      .map(entry => ({
+        oldSlug: entry.oldSlug,
+        newSlug: entry.newSlug,
+        redirectType: entry.redirectType,
+      }));
+  },
+
   // New method to fetch all content types and their fields
   async getContentTypes(): Promise<
     Array<{ uid: string; attributes: { [key: string]: { type: string } } }>
@@ -83,7 +125,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     const contentTypes = strapi.contentTypes;
     return Object.entries(contentTypes)
       .filter(([uid]) => uid.startsWith('api::'))
-      .map(([uid, model]) => ({
+      .map(([uid, model]:any) => ({
         uid,
         attributes: model.attributes,
       }));

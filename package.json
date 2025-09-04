@@ -1,6 +1,6 @@
 {
-  "name": "stpl-redirect-manager",
-  "version": "1.0.4",
+  "name": "strapi-plugin-redirects",
+  "version": "1.0.6",
   "keywords": [],
   "type": "commonjs",
   "exports": {
@@ -31,31 +31,26 @@
     "test:ts:front": "run -T tsc -p admin/tsconfig.json",
     "test:ts:back": "run -T tsc -p server/tsconfig.json"
   },
-  "dependencies": {
-    "@strapi/design-system": "^2.0.0-rc.23",
-    "@strapi/icons": "^2.0.0-rc.23",
-    "react-intl": "^7.1.11"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@strapi/strapi": "^5.12.6",
-    "@strapi/sdk-plugin": "^5.3.2",
     "prettier": "^3.5.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.30.0",
-    "styled-components": "^6.1.17",
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
-    "@strapi/typescript-utils": "^5.12.6",
-    "typescript": "^5.8.3"
+    "@strapi/typescript-utils": "5.11.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/styled-components": "^5.1.34",
+    "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "@strapi/strapi": "^5.12.6",
-    "@strapi/sdk-plugin": "^5.3.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.30.0",
-    "styled-components": "^6.1.17"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "@strapi/strapi": "5.21.0",
+    "styled-components": "6.1.15",
+    "@strapi/sdk-plugin": "^5.3.2"
+  },
+  "resolutions": {
+    "esbuild": "0.20.2"
   },
   "strapi": {
     "kind": "plugin",
@@ -65,5 +60,5 @@
   },
   "description": "It redirects the content in strapi.",
   "license": "MIT",
-  "author": "himanshu@make.io <himanshu@make.io>"
+  "author": "Team Make.Digital <dev@makestories.io>"
 }

@@ -70,17 +70,17 @@ const redirect$3 = [
     handler: "redirect.getSettings",
     config: { auth: false, policies: [] }
   },
-  /**  
+  /**
    * path: /api/redirect-manager/settings
-   * 
+   *
    *   request body
-   * 
+   *
    *    {
    *     "enabledContentTypes": {
    *     "api::article.article": { "enabled": true, "slugField": "slug" }
    *    }
    *   }
-   * 
+   *
    */
   {
     method: "POST",
@@ -100,6 +100,20 @@ const redirect$3 = [
     method: "GET",
     path: "/redirect",
     handler: "redirect.getRedirect",
+    config: { auth: false, policies: [] }
+  },
+  // path: /api/redirect-manager/redirect/all
+  {
+    method: "GET",
+    path: "/redirect/all",
+    handler: "redirect.getAllRedirect",
+    config: { auth: false, policies: [] }
+  },
+  // path: [POST] /api/redirect-manager/redirect
+  {
+    method: "POST",
+    path: "/redirect",
+    handler: "redirect.createRedirect",
     config: { auth: false, policies: [] }
   }
 ];
@@ -144,18 +158,17 @@ const contentTypes = {
     schema: redirect$2
   }
 };
-const controller = ({ strapi: strapi2 }) => ({
-  index(ctx) {
+const controller = {
+  async index(ctx) {
+    const { strapi: strapi2 } = ctx;
     ctx.body = strapi2.plugin("redirect-manager").service("service").getWelcomeMessage();
   }
-});
-const typedStrapi = strapi;
+};
 const redirect$1 = {
   async getSettings(ctx) {
     try {
-      const redirectService = typedStrapi.plugin("redirect-manager").service("redirect");
+      const redirectService = strapi.plugin("redirect-manager").service("redirect");
       const settings = await redirectService.getSettings();
-      ctx.body = settings;
       ctx.send(settings);
     } catch (error) {
       console.error("Redirect Controller Error in getSettings:", error);
@@ -166,10 +179,9 @@ const redirect$1 = {
     try {
       const { enabledContentTypes } = ctx.request.body;
       if (!enabledContentTypes || typeof enabledContentTypes !== "object") {
-        ctx.badRequest("Invalid or missing enabledContentTypes in request body.");
-        return;
+        return ctx.badRequest("Invalid or missing enabledContentTypes in request body.");
       }
-      const redirectService = typedStrapi.plugin("redirect-manager").service("redirect");
+      const redirectService = strapi.plugin("redirect-manager").service("redirect");
       await redirectService.saveSettings({ enabledContentTypes });
       ctx.body = { ok: true };
     } catch (error) {
@@ -179,9 +191,8 @@ const redirect$1 = {
   },
   async getContentTypes(ctx) {
     try {
-      const redirectService = typedStrapi.plugin("redirect-manager").service("redirect");
-      const contentTypes2 = await redirectService.getContentTypes();
-      ctx.body = contentTypes2;
+      const redirectService = strapi.plugin("redirect-manager").service("redirect");
+      ctx.body = await redirectService.getContentTypes();
     } catch (error) {
       console.error("Redirect Controller Error in getContentTypes:", error);
       ctx.internalServerError("An error occurred while fetching content types.");
@@ -193,7 +204,7 @@ const redirect$1 = {
       return ctx.badRequest("Missing contentType or slug in parameters.");
     }
     try {
-      const redirectService = typedStrapi.plugin("redirect-manager").service("redirect");
+      const redirectService = strapi.plugin("redirect-manager").service("redirect");
       const resolvedRedirect = await redirectService.resolveRedirect(contentType, slug);
       let finalSlug = slug;
       let redirectChainFollowed = false;
@@ -207,19 +218,13 @@ const redirect$1 = {
       const config2 = settings.enabledContentTypes?.[contentType];
       const slugField = config2?.slugField;
       if (!slugField) {
-        return ctx.internalServerError(`Slug field not configured for content type: ${contentType}`);
+        return ctx.internalServerError(`Slug field not configured for ${contentType}`);
       }
-      const content = await typedStrapi.db.query(contentType).findOne({
+      const content = await strapi.db.query(contentType).findOne({
         where: { [slugField]: finalSlug }
       });
-      if (!content) {
-        return ctx.notFound("Content not found for the resolved slug.");
-      }
-      const objectToSend = {
-        from: slug,
-        to: content.slug
-      };
-      ctx.send(objectToSend);
+      if (!content) return ctx.notFound("Content not found");
+      ctx.send({ from: slug, to: content.slug });
     } catch (error) {
       console.error(`Redirect Controller Error fetching content for slug ${slug} in ${contentType}:`, error);
       ctx.internalServerError("An error occurred while fetching content.");
@@ -231,17 +236,30 @@ const redirect$1 = {
       return ctx.badRequest("Missing contentType or oldSlug in query parameters.");
     }
     try {
-      const redirectService = typedStrapi.plugin("redirect-manager").service("redirect");
-      const redirect2 = await redirectService.resolveRedirect(contentType, oldSlug);
-      if (!redirect2) {
-        ctx.body = { data: null };
-      } else {
-        ctx.body = { data: redirect2 };
-      }
+      const redirectService = strapi.plugin("redirect-manager").service("redirect");
+      ctx.body = { data: await redirectService.resolveRedirect(contentType, oldSlug) ?? null };
     } catch (error) {
       console.error("Redirect Controller Error querying redirect:", error);
       ctx.internalServerError("Error querying redirect");
     }
+  },
+  async getAllRedirect(ctx) {
+    try {
+      const redirectService = strapi.plugin("redirect-manager").service("redirect");
+      ctx.body = { data: await redirectService.getAllRedirects() ?? null };
+    } catch (error) {
+      console.error("Redirect Controller Error querying redirect:", error);
+      ctx.internalServerError("Error querying redirect");
+    }
+  },
+  async createRedirect(ctx) {
+    const { data } = ctx.request.body;
+    console.log({
+      data
+    });
+    const redirectService = strapi.plugin("redirect-manager").service("redirect");
+    await redirectService.createRedirect(data);
+    ctx.body = { data: "Created" };
   }
 };
 const controllers = {
@@ -304,9 +322,26 @@ const redirect = ({ strapi: strapi2 }) => ({
     let redirect2 = null;
     const visitedSlugs = /* @__PURE__ */ new Set();
     while (true) {
-      const foundRedirect = await strapi2.db.query("plugin::redirect-manager.redirect").findOne({
-        where: { contentType, oldSlug: currentSlug }
-      });
+      const [
+        foundRedirect1,
+        foundRedirect2,
+        foundRedirect3,
+        foundRedirect4
+      ] = await Promise.all([
+        strapi2.db.query("plugin::redirect-manager.redirect").findOne({
+          where: { contentType, oldSlug: currentSlug }
+        }),
+        strapi2.db.query("plugin::redirect-manager.redirect").findOne({
+          where: { contentType, oldSlug: "/" + currentSlug }
+        }),
+        strapi2.db.query("plugin::redirect-manager.redirect").findOne({
+          where: { contentType, oldSlug: currentSlug + "/" }
+        }),
+        strapi2.db.query("plugin::redirect-manager.redirect").findOne({
+          where: { contentType, oldSlug: "/" + currentSlug + "/" }
+        })
+      ]);
+      const foundRedirect = foundRedirect1 || foundRedirect2 || foundRedirect3 || foundRedirect4;
       if (!foundRedirect || visitedSlugs.has(foundRedirect.newSlug)) {
         break;
       }
@@ -315,6 +350,20 @@ const redirect = ({ strapi: strapi2 }) => ({
       visitedSlugs.add(currentSlug);
     }
     return redirect2;
+  },
+  async getAllRedirects() {
+    const entries = await strapi2.db.query("plugin::redirect-manager.redirect").findMany({
+      select: ["oldSlug", "newSlug", "redirectType"],
+      limit: 500
+      // important: fetch ALL, not just 100
+    });
+    return entries.filter((entry) => {
+      return entry.oldSlug.split("/").filter(Boolean).length > 1;
+    }).map((entry) => ({
+      oldSlug: entry.oldSlug,
+      newSlug: entry.newSlug,
+      redirectType: entry.redirectType
+    }));
   },
   // New method to fetch all content types and their fields
   async getContentTypes() {

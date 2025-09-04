@@ -1,4 +1,3 @@
-/// <reference types="koa" />
 declare const _default: {
     register: ({ strapi }: {
         strapi: import("@strapi/types/dist/core").Strapi; /**
@@ -15,20 +14,7 @@ declare const _default: {
         default: {};
         validator(): void;
     };
-    controllers: {
-        controller: ({ strapi }: {
-            strapi: import("@strapi/types/dist/core").Strapi;
-        }) => {
-            index(ctx: any): void;
-        };
-        redirect: {
-            getSettings(ctx: import("koa").Context): Promise<void>;
-            saveSettings(ctx: import("koa").Context): Promise<void>;
-            getContentTypes(ctx: import("koa").Context): Promise<void>;
-            findContentBySlug(ctx: import("koa").Context): Promise<import("koa").Context>;
-            getRedirect(ctx: import("koa").Context): Promise<import("koa").Context>;
-        };
-    };
+    controllers: Record<string, import("@strapi/types/dist/core").Controller>;
     routes: {
         'content-api': {
             type: string;
@@ -58,6 +44,7 @@ declare const _default: {
             saveSettings(settings: import("./services/redirect").Settings): Promise<void>;
             createRedirect(data: import("./services/redirect").RedirectData): Promise<void>;
             resolveRedirect(contentType: string, inputSlug: string): Promise<import("./services/redirect").RedirectEntry>;
+            getAllRedirects(): Promise<import("./services/redirect").RedirectEntryCompact[]>;
             getContentTypes(): Promise<{
                 uid: string;
                 attributes: {

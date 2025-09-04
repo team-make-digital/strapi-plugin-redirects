@@ -2,7 +2,7 @@
 
 🔁 **Centralized redirect management for Strapi v5 – create 301/302 redirects directly from the admin panel**
 
-[![npm version](https://badge.fury.io/js/strapi-plugin-redirect-manager.svg)](https://www.npmjs.com/package/strapi-plugin-redirect-manager)
+[![npm version](https://badge.fury.io/js/strapi-plugin-redirect-manager.svg)](https://www.npmjs.com/package/stpl-redirect-manager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -35,10 +35,11 @@
 npm install strapi-plugin-redirect-manager
 # or
 yarn add strapi-plugin-redirect-manager
-
+```
 ## 🛠️ Setup
 
 1. **Add to plugins configuration** (config/plugins.js):
+```bash
 
 javascript
 module.exports = {
@@ -46,11 +47,14 @@ module.exports = {
     enabled: true,
   },
 };
+```
 
 
 2. **Restart your Strapi application**:
 
-bash
+```bash
+
 npm run develop
 # or
 yarn develop
+```

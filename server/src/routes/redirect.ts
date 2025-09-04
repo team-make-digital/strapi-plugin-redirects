@@ -15,17 +15,17 @@ export default [
     config: { auth: false, policies: [] },
   },
 
-  /**  
+  /**
    * path: /api/redirect-manager/settings
-   * 
+   *
    *   request body
-   * 
+   *
    *    {
    *     "enabledContentTypes": {
    *     "api::article.article": { "enabled": true, "slugField": "slug" }
    *    }
    *   }
-   * 
+   *
    */
   {
     method: 'POST',
@@ -47,6 +47,22 @@ export default [
     method: 'GET',
     path: '/redirect',
     handler: 'redirect.getRedirect',
+    config: { auth: false, policies: [] },
+  },
+
+  // path: /api/redirect-manager/redirect/all
+  {
+    method: 'GET',
+    path: '/redirect/all',
+    handler: 'redirect.getAllRedirect',
+    config: { auth: false, policies: [] },
+  },
+
+  // path: [POST] /api/redirect-manager/redirect
+  {
+    method: 'POST',
+    path: '/redirect',
+    handler: 'redirect.createRedirect',
     config: { auth: false, policies: [] },
   },
 ];

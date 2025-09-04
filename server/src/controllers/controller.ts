@@ -1,13 +1,13 @@
 import type { Core } from '@strapi/strapi';
 
-const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
-  index(ctx) {
+const controller: Core.Controller = {
+  async index(ctx) {
+    const { strapi } = ctx;
     ctx.body = strapi
       .plugin('redirect-manager')
-      // the name of the service file & the method.
       .service('service')
       .getWelcomeMessage();
   },
-});
+};
 
 export default controller;
