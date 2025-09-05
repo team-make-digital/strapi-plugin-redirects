@@ -170,11 +170,11 @@ Request Body:
 }
 ```
 
-## ⚡ Next.js Integration
+# ⚡ Next.js Integration
 
 You can integrate the Redirect Manager plugin with Next.js to automatically apply server-side redirects.
 
-# 1. Create a Redirect Fetcher
+## 1. Create a Redirect Fetcher
 
 Inside your Next.js project, add a helper to fetch redirects from Strapi:
 ```
@@ -189,7 +189,7 @@ export async function getRedirects() {
   return res.json();
 }
 ```
-# 2. Add Middleware for Redirects
+## 2. Add Middleware for Redirects
 
 Create a middleware.ts file in your Next.js project root:
 
@@ -227,7 +227,7 @@ export async function middleware(req: NextRequest) {
 
 This ensures all Strapi-defined redirects are respected in Next.js.
 
-# 3. Example: Dynamic Redirect from Content
+## 3. Example: Dynamic Redirect from Content
 
 You can also fetch content-based redirects (from slugs) in getServerSideProps:
 ```
