@@ -102,56 +102,22 @@ You can integrate the Redirect Manager plugin with Next.js to automatically appl
 
 Inside your Next.js project, add a helper to fetch redirects from Strapi:
 ```
-// lib/getRedirects.ts
-export async function getRedirects() {
-  const res = await fetch(`${process.env.STRAPI_URL}/api/redirect-manager/redirect/all`);
-  if (!res.ok) {
-    console.error("Failed to fetch redirects from Strapi");
-    return [];
-  }
-
-  return res.json();
-}
-```
-## 2. Add Middleware for Redirects
-
-Create a middleware.ts file in your Next.js project root:
-
-```
-// middleware.ts
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-
-let redirects: { from: string; to: string; type: string }[] = [];
-
-async function loadRedirects() {
-  if (redirects.length === 0) {
-    try {
-      const res = await fetch(`${process.env.STRAPI_URL}/api/redirect-manager/redirect/all`);
-      redirects = await res.json();
-    } catch (err) {
-      console.error("Failed to load redirects", err);
-    }
+// lib/getRedirectHistory.ts
+export async function getRedirectHistory(contentType: string, slug: string) {
+  try {
+    const path = `redirect-manager/redirect`;
+    return fetchAPI(
+      path,
+      { oldSlug: slug, contentType },
+      { prefix: "" }
+    );
+  } catch (error) {
+    console.error("Failed to fetch redirect history:", error);
+    return { data: null };
   }
 }
 
-export async function middleware(req: NextRequest) {
-  await loadRedirects();
-
-  const url = req.nextUrl.clone();
-  const redirect = redirects.find((r) => r.from === url.pathname);
-
-  if (redirect) {
-    return NextResponse.redirect(new URL(redirect.to, req.url), parseInt(redirect.type, 10));
-  }
-
-  return NextResponse.next();
-}
-```
-
-This ensures all Strapi-defined redirects are respected in Next.js.
-
-## 3. Example: Dynamic Redirect from Content
+## 2. Example: Dynamic Redirect from Content
 
 You can also fetch content-based redirects (from slugs) in getServerSideProps:
 ```
@@ -159,14 +125,25 @@ You can also fetch content-based redirects (from slugs) in getServerSideProps:
 import { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const res = await fetch(
-    `${process.env.STRAPI_URL}/api/redirect-manager/content/api::article.article/${params?.slug}`
-  );
+  const slug = params?.slug as string;
+  const contentType = "api::article.article";
 
+  const redirect = await getRedirectHistory(contentType, slug);
+
+  if (redirect?.data) {
+    return {
+      redirect: {
+        destination: redirect.data.newSlug,
+        permanent: redirect.data.redirectType === "301",
+      },
+    };
+  }
+
+  // fallback: fetch content if no redirect
+  const res = await fetch(`${process.env.STRAPI_URL}/api/articles/${slug}`);
   if (res.status === 404) {
     return { notFound: true };
   }
-
   const data = await res.json();
   return {
     props: { article: data },
