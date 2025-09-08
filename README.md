@@ -116,11 +116,13 @@ export async function getRedirectHistory(contentType: string, slug: string) {
     return { data: null };
   }
 }
+```
 
 ## 2. Example: Dynamic Redirect from Content
 
 You can also fetch content-based redirects (from slugs) in getServerSideProps:
 ```
+
 // pages/[slug].tsx
 import { GetServerSideProps } from "next";
 
