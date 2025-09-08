@@ -70,65 +70,7 @@ All routes are prefixed with:
 /api/redirect-manager
 ```
 
-## 🔍 1. Get Content by Slug
-
-Endpoint:
-```
-GET /api/redirect-manager/content/:contentType/:slug
-```
-
-Description:
-Fetch a single content entry by its content type and slug field.
-
-Params:
-
-contentType – UID of the content type (e.g. api::article.article)
-
-slug – Slug value to search for
-
-## ⚙️ 2. Get Plugin Settings
-
-Endpoint:
-```
-GET /api/redirect-manager/settings
-```
-
-Description:
-Retrieve the redirect manager’s settings.
-
-## 📝 3. Save Plugin Settings
-
-Endpoint:
-```
-POST /api/redirect-manager/settings
-```
-
-Description:
-Update and save plugin settings.
-
-Request Body:
-```
-{
-  "enabledContentTypes": {
-    "api::article.article": {
-      "enabled": true,
-      "slugField": "slug"
-    }
-  }
-}
-```
-
-## 📂 4. Get Available Content Types
-
-Endpoint:
-```
-GET /api/redirect-manager/content-types
-```
-
-Description:
-Fetch a list of content types that can be enabled for redirects.
-
-## 🔁 5. Get Single Redirect
+## 🔁 1. Get Single Redirect
 
 Endpoint:
 ```
@@ -142,7 +84,7 @@ Query Params:
 
 from – The source path (e.g. /old-blog)
 
-## 📋 6. Get All Redirects
+## 📋 2. Get All Redirects
 
 Endpoint:
 ```
@@ -151,24 +93,6 @@ GET /api/redirect-manager/redirect/all
 
 Description:
 Fetch all registered redirects.
-
-## ➕ 7. Create a Redirect
-
-Endpoint:
-```
-POST /api/redirect-manager/redirect
-```
-
-Description:
-Create a new redirect rule.
-
-Request Body:
-```
-{
-  "oldSlug": "/legacy-page",
-  "newSlug": "/new-page"
-}
-```
 
 # ⚡ Next.js Integration
 
