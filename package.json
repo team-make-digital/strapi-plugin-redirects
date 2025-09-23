@@ -1,7 +1,6 @@
 {
   "name": "strapi-plugin-redirect-manager",
   "version": "1.0.1",
-  "keywords": [],
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
@@ -58,6 +57,12 @@
     "displayName": "Strapi Redirection ",
     "description": "It redirects the content in strapi."
   },
+  "keywords": [
+    "Strapi",
+    "Plugin",
+    "Redirects",
+    "Auto Redirects Manager"
+  ],
   "description": "It redirects the content in strapi.",
   "license": "MIT",
   "author": "Team Make.Digital <dev@makestories.io>"

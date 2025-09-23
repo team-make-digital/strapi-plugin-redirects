@@ -155,3 +155,5 @@ export default function ArticlePage({ article }: any) {
   return <div>{article.title}</div>;
 }
 ```
+
+🔑 **Keywords:** Strapi, Plugin, Redirects, Auto Redirects Manager
