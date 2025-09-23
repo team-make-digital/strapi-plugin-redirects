@@ -41,7 +41,6 @@ yarn add strapi-plugin-redirect-manager
 1. **Add to plugins configuration** (config/plugins.js):
 ```bash
 
-javascript
 module.exports = {
   'redirect-manager': {
     enabled: true,
@@ -70,7 +69,7 @@ All routes are prefixed with:
 /api/redirect-manager
 ```
 
-## 🔁 1. Get Single Redirect
+### 🔁 1. Get Single Redirect
 
 Endpoint:
 ```
@@ -84,7 +83,7 @@ Query Params:
 
 from – The source path (e.g. /old-blog)
 
-## 📋 2. Get All Redirects
+### 📋 2. Get All Redirects
 
 Endpoint:
 ```
@@ -94,11 +93,11 @@ GET /api/redirect-manager/redirect/all
 Description:
 Fetch all registered redirects.
 
-# ⚡ Next.js Integration
+# ⚡ Next.js Integration Example
 
 You can integrate the Redirect Manager plugin with Next.js to automatically apply server-side redirects.
 
-## 1. Create a Redirect Fetcher
+### 1. Create a Redirect Fetcher
 
 Inside your Next.js project, add a helper to fetch redirects from Strapi:
 ```
@@ -118,7 +117,7 @@ export async function getRedirectHistory(contentType: string, slug: string) {
 }
 ```
 
-## 2. Example: Dynamic Redirect from Content
+### 2. Dynamic Redirect from Content
 
 You can also fetch content-based redirects (from slugs) in getServerSideProps:
 ```
